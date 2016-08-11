@@ -25,7 +25,7 @@ class PnrValidatorServiceProvider extends ServiceProvider {
             'pnr-validator'
         );
 
-        $this->app['validator']->extend('pnr', 'Adaptivemedia\PnrValidator\Validator@validatePnr');
+        $this->app['validator']->extend('pnr', 'Adaptivemedia\PnrValidator\PnrValidator@validatePnr');
     }
 
     /**
