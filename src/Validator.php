@@ -2,9 +2,9 @@
 
 namespace Adaptivemedia\PnrValidator;
 
-use Illuminate\Validation\Validator;
+use Illuminate\Validation\Validator as LaravelValidator;
 
-class PnrValidator extends Validator
+class Validator extends LaravelValidator
 {
 
     /**
