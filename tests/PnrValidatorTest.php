@@ -9,11 +9,6 @@ class PnrValidatorTest extends PHPUnit_Framework_TestCase
         Mockery::close();
     }
 
-    public function testServiceProvider()
-    {
-        return new PnrValidator($this->getTranslator(), [], []);
-    }
-
     public function testPassedForCorrectPnrs()
     {
         $trans = $this->getTranslator();
