@@ -1,6 +1,6 @@
 <?php
 
-use Adaptivemedia\PnrValidator\Validator;
+use Adaptivemedia\PnrValidator\PnrValidator;
 
 class PnrValidatorTest extends PHPUnit_Framework_TestCase
 {
@@ -11,7 +11,7 @@ class PnrValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testServiceProvider()
     {
-        return new \Adaptivemedia\PnrValidator\Validator($this->getTranslator(), [], []);
+        return new PnrValidator($this->getTranslator(), [], []);
     }
 
     public function testPassedForCorrectPnrs()
@@ -26,28 +26,28 @@ class PnrValidatorTest extends PHPUnit_Framework_TestCase
         $data = [
             'pnr' => '19830603-0217',
         ];
-        $v = new Validator($trans, $data, $rules);
+        $v = new PnrValidator($trans, $data, $rules);
         $this->assertTrue($v->passes());
 
         // With year without hyphen
         $data = [
             'pnr' => '198306030217',
         ];
-        $v = new Validator($trans, $data, $rules);
+        $v = new PnrValidator($trans, $data, $rules);
         $this->assertTrue($v->passes());
 
         // Without year and hyphen
         $data = [
             'pnr' => '830603-0217',
         ];
-        $v = new Validator($trans, $data, $rules);
+        $v = new PnrValidator($trans, $data, $rules);
         $this->assertTrue($v->passes());
 
         // Without year without hyphen
         $data = [
             'pnr' => '8306030217',
         ];
-        $v = new Validator($trans, $data, $rules);
+        $v = new PnrValidator($trans, $data, $rules);
         $this->assertTrue($v->passes());
     }
 
@@ -64,7 +64,7 @@ class PnrValidatorTest extends PHPUnit_Framework_TestCase
             'pnr' => '19830603-0218',
         ];
 
-        $v = new Validator($trans, $data, $rules);
+        $v = new PnrValidator($trans, $data, $rules);
         $this->assertTrue($v->fails());
     }
 
