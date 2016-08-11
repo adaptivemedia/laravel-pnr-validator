@@ -7,7 +7,7 @@ Install the package through [Composer](http://getcomposer.org).
 On the command line:
 
 ```sh
-composer require adaptivemedia/pnr-validator: dev-master
+composer require adaptivemedia/laravel-pnr-validator: dev-master
 ```
 
 ## Configuration
@@ -18,7 +18,7 @@ Add the following to your `providers` array in `config/app.php`:
 'providers' => array(
     // ...
 
-    'Adaptivemedia\PnrValidator\PnrValidatorServiceProvider',
+    Adaptivemedia\PnrValidator\PnrValidatorServiceProvider::class,
 ),
 ```
 

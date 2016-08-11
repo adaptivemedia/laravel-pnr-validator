@@ -2,9 +2,9 @@
 
 namespace Adaptivemedia\PnrValidator;
 
-use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class PnrValidatorServiceProvider extends LaravelServiceProvider {
+class PnrValidatorServiceProvider extends ServiceProvider {
 
     /**
      * Indicates if loading of the provider is deferred.
@@ -20,6 +20,12 @@ class PnrValidatorServiceProvider extends LaravelServiceProvider {
      */
     public function boot() {
 
+        $this->loadTranslationsFrom(
+            __DIR__ . '/lang',
+            'pnr-validator'
+        );
+
+        $this->app['validator']->extend('pnr', 'Adaptivemedia\PnrValidator@validatePnr');
     }
 
     /**
@@ -29,30 +35,6 @@ class PnrValidatorServiceProvider extends LaravelServiceProvider {
      */
     public function register() {
 
-        // Bind any implementations.
-        // Whenever the validator factory is accessed in the container, we set
-        // the custom resolver on it (this works in Larvel >= 5.2 as well).
-        $this->app->resolving('validator', function ($factory, $app) {
-            $factory->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
-                return new PnrValidator(
-                    $translator,
-                    $data,
-                    $rules,
-                    $messages,
-                    $customAttributes
-                );
-            });
-        });
-
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides() {
-
-        return [];
-    }
 }
