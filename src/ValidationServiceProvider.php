@@ -25,14 +25,29 @@ class ValidationServiceProvider extends LaravelServiceProvider {
             'pnr-validator'
         );
 
-        $messages = trans('pnr-validator::validation');
-        $this->app->bind('Adaptivemedia\PnrValidator\PnrValidator', function($app) use ($messages)
-        {
-            return new PnrValidator($app['translator'], [], [], $messages);
+        // Bind validator via "resolver"
+        $this->app['validator']->resolver(function($translator, $data, $rules, $messages, $customAttributes) {
+
+            $messages['pnr'] = $translator->get('validation.pnr');
+
+            return new PnrValidator(
+                $translator,
+                $data,
+                $rules,
+                $messages,
+                $customAttributes
+            );
         });
 
-        $translation = $this->app['translator']->trans('pnr-validator::validation.pnr');
-        $this->app['validator']->extend('pnr', 'Adaptivemedia\PnrValidator\PnrValidator@validatePnr', $translation);
+        // Bind validator via "extend"
+//        $messages = trans('pnr-validator::validation');
+//        $this->app->bind('Adaptivemedia\PnrValidator\PnrValidator', function($app) use ($messages)
+//        {
+//            return new PnrValidator($app['translator'], [], [], $messages);
+//        });
+//
+//        $translation = $this->app['translator']->trans('pnr-validator::validation.pnr');
+//        $this->app['validator']->extend('pnr', 'Adaptivemedia\PnrValidator\PnrValidator@validatePnr', $translation);
 
     }
 
@@ -42,21 +57,6 @@ class ValidationServiceProvider extends LaravelServiceProvider {
      * @return void
      */
     public function register() {
-
-        // Bind any implementations.
-        // Whenever the validator factory is accessed in the container, we set
-        // the custom resolver on it (this works in Larvel >= 5.2 as well).
-//        $this->app->resolving('validator', function ($factory, $app) {
-//            $factory->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
-//                return new PnrValidator(
-//                    $translator,
-//                    $data,
-//                    $rules,
-//                    $messages,
-//                    $customAttributes
-//                );
-//            });
-//        });
 
     }
 

@@ -18,7 +18,7 @@ Add the following to your `providers` array in `config/app.php`:
 'providers' => array(
     // ...
 
-    Adaptivemedia\PnrValidator\PnrValidatorServiceProvider::class,
+    Adaptivemedia\PnrValidator\ValidationServiceProvider::class,
 ),
 ```
 
