@@ -28,7 +28,8 @@ class ValidationServiceProvider extends LaravelServiceProvider {
         // Bind validator via "resolver"
         $this->app['validator']->resolver(function($translator, $data, $rules, $messages, $customAttributes) {
 
-            //$messages = trans('pnr-validator::validation');
+            // Set error messages
+            //$messages = trans('pnr-validator::validation'); // alt way via global method
             $messages['pnr'] = $translator->get('pnr-validator::validation.pnr');
 
             return new PnrValidator(
