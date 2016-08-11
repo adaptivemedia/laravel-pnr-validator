@@ -17,6 +17,30 @@ class ValidateServiceProviderTest extends TestCase
      */
     public function testBootstrap()
     {
-        // If we get to here, then all is well!
+        // Pass
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => '830603-0217',
+            ],
+            [
+                'pnr' => 'pnr'
+            ]
+        );
+        $this->assertTrue($validator->passes());
+
+        // Fail
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => '8322223217',
+            ],
+            [
+                'pnr' => 'pnr'
+            ]
+        );
+
+        $this->assertTrue($validator->fails());
+
+        $messages = $validator->messages();
+        $this->assertEquals('The personal number is incorrect', $messages->first('pnr'));
     }
 }
