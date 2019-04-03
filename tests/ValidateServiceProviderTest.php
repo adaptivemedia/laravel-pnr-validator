@@ -50,7 +50,20 @@ class ValidateServiceProviderTest extends TestCase
         );
 
         $this->assertTrue($validator->fails());
+        $messages = $validator->messages();
+        $this->assertEquals('The personal number is incorrect', $messages->first('pnr'));
 
+        // Fail with rule
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => $incorrectPnr,
+            ],
+            [
+                'pnr' => new PersonalIdentityNumber()
+            ]
+        );
+
+        $this->assertTrue($validator->fails());
         $messages = $validator->messages();
         $this->assertEquals('The personal number is incorrect', $messages->first('pnr'));
     }

@@ -13,6 +13,6 @@ class PersonalIdentityNumber implements Rule
 
     public function message(): string
     {
-        return __('validation.pnr');
+        return __('pnr-validator::validation.pnr');
     }
 }

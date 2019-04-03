@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'pnr' => 'The personal number is incorrect',
+    'pnr' => 'The personal identity number is incorrect',
 ];
