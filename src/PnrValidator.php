@@ -6,10 +6,7 @@ use Illuminate\Validation\Validator;
 
 class PnrValidator extends Validator
 {
-
     /**
-     * Usage: pnr
-     *
      * @param  string $attribute
      * @param  mixed $value
      * @param  array $parameters

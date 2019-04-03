@@ -1,15 +1,10 @@
 <?php
 
+use Adaptivemedia\PnrValidator\PersonalIdentityNumber;
 use Orchestra\Testbench\TestCase;
 
 class ValidateServiceProviderTest extends TestCase
 {
-    protected function getPackageProviders($app)
-    {
-        return [
-            'Adaptivemedia\PnrValidator\ValidationServiceProvider'
-        ];
-    }
     /**
      * Bootstraps Laravel application. Tests service providers work on a basic level.
      *
@@ -17,10 +12,14 @@ class ValidateServiceProviderTest extends TestCase
      */
     public function testBootstrap()
     {
+        $correctPnr = '830603-0217';
+        $incorrectPnr = '8322223217';
+
+
         // Pass
         $validator = $this->app['validator']->make(
             [
-                'pnr' => '830603-0217',
+                'pnr' => $correctPnr,
             ],
             [
                 'pnr' => 'pnr'
@@ -28,10 +27,22 @@ class ValidateServiceProviderTest extends TestCase
         );
         $this->assertTrue($validator->passes());
 
+        // Success with rule
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => $correctPnr,
+            ],
+            [
+                'pnr' => new PersonalIdentityNumber()
+            ]
+        );
+
+        $this->assertTrue($validator->passes());
+
         // Fail
         $validator = $this->app['validator']->make(
             [
-                'pnr' => '8322223217',
+                'pnr' => $incorrectPnr,
             ],
             [
                 'pnr' => 'pnr'
@@ -43,4 +54,12 @@ class ValidateServiceProviderTest extends TestCase
         $messages = $validator->messages();
         $this->assertEquals('The personal number is incorrect', $messages->first('pnr'));
     }
+
+    protected function getPackageProviders($app)
+    {
+        return [
+            'Adaptivemedia\PnrValidator\ValidationServiceProvider'
+        ];
+    }
+
 }

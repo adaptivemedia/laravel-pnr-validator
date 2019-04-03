@@ -1,27 +1,14 @@
-# Laravel 5 Package For Validating a Swedish Personnummer
+# Validate Swedish Personal Identity Numbers
 
 ## Installation
 
-Install the package through [Composer](http://getcomposer.org).
-
-On the command line:
+Install the package with Composer via the command line:
 
 ```sh
-composer require adaptivemedia/laravel-pnr-validator: dev-master
+composer require adaptivemedia/laravel-pnr-validator
 ```
 
-## Configuration
-
-Add the following to your `providers` array in `config/app.php`:
-
-```php
-'providers' => array(
-    // ...
-
-    Adaptivemedia\PnrValidator\ValidationServiceProvider::class,
-),
-```
-
+This package has auto discovery so you don't need to add the Service Provider.
 
 ## Usage
 
@@ -33,11 +20,19 @@ $rules = [
 ];
 ```
 
+```php
+$rules = [
+    'field' => new PersonalIdentityNumber()
+];
+```
+
 See the [Validation documentation](http://laravel.com/docs/validation) of Laravel.
 
-## Valid pnr formats
+## Valid formats
 
 - YYYYMMDD-XXXX
 - YYMMDD-XXXX
 - YYYYMMDDXXXX
 - YYMMDDXXXX
+- XXXXXX-XXXX (organization, TODO)
+- XXXXXXXXXX (organization, TODO)

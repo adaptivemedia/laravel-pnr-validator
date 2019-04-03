@@ -1,52 +1,51 @@
 <?php
 
 use Adaptivemedia\PnrValidator\PnrValidator;
+use Illuminate\Contracts\Translation\Translator;
 
-class PnrValidatorTest extends PHPUnit_Framework_TestCase
+class PnrValidatorTest extends \PHPUnit\Framework\TestCase
 {
     public function tearDown()
     {
         Mockery::close();
     }
 
-    public function testPassedForCorrectPnrs()
+    /**
+     * @dataProvider getCorrectNumbers
+     */
+    public function testCorrect(string $number)
     {
         $trans = $this->getTranslator();
-
         $rules = [
             'pnr' => 'pnr'
         ];
 
-        // With year and hyphen
         $data = [
-            'pnr' => '19830603-0217',
-        ];
-        $v = new PnrValidator($trans, $data, $rules);
-        $this->assertTrue($v->passes());
-
-        // With year without hyphen
-        $data = [
-            'pnr' => '198306030217',
-        ];
-        $v = new PnrValidator($trans, $data, $rules);
-        $this->assertTrue($v->passes());
-
-        // Without year and hyphen
-        $data = [
-            'pnr' => '830603-0217',
-        ];
-        $v = new PnrValidator($trans, $data, $rules);
-        $this->assertTrue($v->passes());
-
-        // Without year without hyphen
-        $data = [
-            'pnr' => '8306030217',
+            'pnr' => $number,
         ];
         $v = new PnrValidator($trans, $data, $rules);
         $this->assertTrue($v->passes());
     }
 
-    public function testFailsForIncorrectPnr()
+
+    public function getCorrectNumbers(): array
+    {
+        return [
+            ['19830603-0217'],
+            ['198306030217'],
+            ['19101227-9806'],
+            ['191012279806'],
+            ['830603-0217'],
+            ['8306030217'],
+            ['201412312397'],
+            ['20141231-2397'],
+        ];
+    }
+
+    /**
+     * @dataProvider getIncorrectNumbers
+     */
+    public function testIncorrect(string $number)
     {
         $trans = $this->getTranslator();
         $trans->shouldReceive('trans');
@@ -55,17 +54,25 @@ class PnrValidatorTest extends PHPUnit_Framework_TestCase
             'pnr' => 'pnr'
         ];
 
+
         $data = [
-            'pnr' => '19830603-0218',
+            'pnr' => $number,
         ];
-
         $v = new PnrValidator($trans, $data, $rules);
-        $this->assertTrue($v->fails());
+        $this->assertFalse($v->passes());
     }
 
-    protected function getTranslator()
+    public function getIncorrectNumbers(): array
     {
-        return Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
+        return [
+            ['19830603-0218'],
+            ['830603-0218'],
+            ['20830603-0218'],
+        ];
     }
 
+    protected function getTranslator(): Translator
+    {
+        return Mockery::mock(Translator::class);
+    }
 }
