@@ -51,7 +51,7 @@ class ValidateServiceProviderTest extends TestCase
 
         $this->assertTrue($validator->fails());
         $messages = $validator->messages();
-        $this->assertEquals('The personal number is incorrect', $messages->first('pnr'));
+        $this->assertEquals('The personal identity number is incorrect', $messages->first('pnr'));
 
         // Fail with rule
         $validator = $this->app['validator']->make(
@@ -65,7 +65,7 @@ class ValidateServiceProviderTest extends TestCase
 
         $this->assertTrue($validator->fails());
         $messages = $validator->messages();
-        $this->assertEquals('The personal number is incorrect', $messages->first('pnr'));
+        $this->assertEquals('The personal identity number is incorrect', $messages->first('pnr'));
     }
 
     protected function getPackageProviders($app)
