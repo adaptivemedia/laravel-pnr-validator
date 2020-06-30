@@ -1,32 +1,49 @@
 <?php
 
-use Adaptivemedia\PnrValidator\PnrValidator;
-use Illuminate\Contracts\Translation\Translator;
+use Adaptivemedia\PnrValidator\PersonalIdentityNumber;
+use Illuminate\Support\Facades\Route;
+use Orchestra\Testbench\TestCase;
 
-class PnrValidatorTest extends \PHPUnit\Framework\TestCase
+class PnrValidatorTest extends TestCase
 {
-    public function tearDown()
+    protected function setUp(): void
     {
-        Mockery::close();
+        parent::setUp();
+
+        Route::middleware('web')->post('/', function (\Illuminate\Http\Request $request) {
+            $request->validate([
+                'pnr' => ['required', 'pnr']
+            ]);
+
+            return 'ok';
+        });
     }
 
     /**
+     * @test
      * @dataProvider getCorrectNumbers
+     * @param string $correctPnr
      */
-    public function testCorrect(string $number)
+    public function correct_pnr_is_validated_for_post_request(string $correctPnr)
     {
-        $trans = $this->getTranslator();
-        $rules = [
-            'pnr' => 'pnr'
-        ];
-
-        $data = [
-            'pnr' => $number,
-        ];
-        $v = new PnrValidator($trans, $data, $rules);
-        $this->assertTrue($v->passes());
+        $this->post('/', [
+            'pnr' => $correctPnr
+        ])
+            ->assertSessionDoesntHaveErrors()
+            ->assertOk();
     }
 
+    /**
+     * @test
+     * @dataProvider getIncorrectNumbers
+     * @param string $incorrectPnr
+     */
+    public function incorrect_pnr_is_validated_for_post_request(string $incorrectPnr)
+    {
+        $this->post('/', [
+            'pnr' => $incorrectPnr
+        ])->assertSessionHasErrors(['pnr' => 'The personal identity number is incorrect']);
+    }
 
     public function getCorrectNumbers(): array
     {
@@ -42,26 +59,6 @@ class PnrValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider getIncorrectNumbers
-     */
-    public function testIncorrect(string $number)
-    {
-        $trans = $this->getTranslator();
-        $trans->shouldReceive('trans');
-
-        $rules = [
-            'pnr' => 'pnr'
-        ];
-
-
-        $data = [
-            'pnr' => $number,
-        ];
-        $v = new PnrValidator($trans, $data, $rules);
-        $this->assertFalse($v->passes());
-    }
-
     public function getIncorrectNumbers(): array
     {
         return [
@@ -71,8 +68,81 @@ class PnrValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    protected function getTranslator(): Translator
+    /** @test */
+    public function validator_uses_locales_for_error_messages()
     {
-        return Mockery::mock(Translator::class);
+        app()->setLocale('sv');
+
+        $this->post('/', [
+            'pnr' => '834343434'
+        ])->assertSessionHasErrors(['pnr' => 'Personnumret är inte korrekt']);
     }
+
+    /**
+     * @test
+     */
+    public function manual_validator_works()
+    {
+        $correctPnr = '830603-0217';
+        $incorrectPnr = '8322223217';
+
+        // Pass
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => $correctPnr,
+            ],
+            [
+                'pnr' => 'pnr'
+            ]
+        );
+        $this->assertTrue($validator->passes());
+
+        // Success with rule
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => $correctPnr,
+            ],
+            [
+                'pnr' => new PersonalIdentityNumber()
+            ]
+        );
+
+        $this->assertTrue($validator->passes());
+
+        // Fail
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => $incorrectPnr,
+            ],
+            [
+                'pnr' => 'pnr'
+            ]
+        );
+
+        $this->assertTrue($validator->fails());
+        $messages = $validator->messages();
+        $this->assertEquals('The personal identity number is incorrect', $messages->first('pnr'));
+
+        // Fail with rule
+        $validator = $this->app['validator']->make(
+            [
+                'pnr' => $incorrectPnr,
+            ],
+            [
+                'pnr' => new PersonalIdentityNumber()
+            ]
+        );
+
+        $this->assertTrue($validator->fails());
+        $messages = $validator->messages();
+        $this->assertEquals('The personal identity number is incorrect', $messages->first('pnr'));
+    }
+
+    protected function getPackageProviders($app)
+    {
+        return [
+            Adaptivemedia\PnrValidator\PnrValidatorServiceProvider::class
+        ];
+    }
+
 }

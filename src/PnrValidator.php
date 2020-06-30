@@ -14,6 +14,6 @@ class PnrValidator extends Validator
      */
     public function validatePnr($attribute, $value, $parameters)
     {
-        return PnrChecker::check($value);
+        return Checker::check($value);
     }
 }
