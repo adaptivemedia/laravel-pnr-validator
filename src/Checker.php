@@ -137,7 +137,7 @@ namespace Adaptivemedia\PnrValidator;
  */
 
 
-class PnrChecker {
+class Checker {
     public static function checksum($pnum) {
         $pnum = self::filter($pnum);
         $len = strlen($pnum);

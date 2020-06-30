@@ -8,7 +8,7 @@ class PersonalIdentityNumber implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return PnrChecker::check($value);
+        return Checker::check($value);
     }
 
     public function message(): string
